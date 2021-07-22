@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<meta charset="utf-8">
+	<meta name="Description" content="Genshin Impact Friday Night Funkin' mod. Featuring Kaeya and Keqing.">
+	<title>Friday Night Funkin'</title>
+
+	<meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
+
+
+	<link rel="shortcut icon" type="image/png" href="./favicon.png">
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-PDS3QN43YJ"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-PDS3QN43YJ');
+	</script>
+
+	<script type="text/javascript" src="./Funkin.js"></script>
+
+	<script>
+		window.addEventListener ("touchmove", function (event) { event.preventDefault (); }, { capture: false, passive: false });
+		if (typeof window.devicePixelRatio != 'undefined' && window.devicePixelRatio > 2) {
+			var meta = document.getElementById ("viewport");
+			meta.setAttribute ('content', 'width=device-width, initial-scale=' + (2 / window.devicePixelRatio) + ', user-scalable=no');
+		}
+	</script>
+
+	<style>
+		html,
+		body {
+			background-color: #1e1e1e;
+			color: #d4d4d4;
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+			margin: 0; padding: 0; height: 100%; overflow: scroll;
+		}
+		a {
+			color: #3391ff;
+		}
+		#openfl-content { background: #000000; width: 100%; height: 100%; }
+		@font-face {
+			font-family: 'VCR OSD Mono';
+			src: url('assets/fonts/vcr.eot?#iefix') format('embedded-opentype'),
+			url('assets/fonts/vcr.woff') format('woff'),
+			url('assets/fonts/vcr.ttf') format('truetype'),
+			url('assets/fonts/vcr.svg#VCR%20OSD%20Mono') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Pixel Arial 11 Bold';
+			src: url('assets/fonts/pixel.eot?#iefix') format('embedded-opentype'),
+			url('assets/fonts/pixel.woff') format('woff'),
+			url('assets/fonts/pixel.otf') format('truetype');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Nokia Cellphone FC Small';
+			src: url('flixel/fonts/nokiafc22.eot?#iefix') format('embedded-opentype'),
+			url('flixel/fonts/nokiafc22.woff') format('woff'),
+			url('flixel/fonts/nokiafc22.ttf') format('truetype'),
+			url('flixel/fonts/nokiafc22.svg#Nokia%20Cellphone%20FC%20Small') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Monsterrat';
+			src: url('flixel/fonts/monsterrat.eot?#iefix') format('embedded-opentype'),
+			url('flixel/fonts/monsterrat.woff') format('woff'),
+			url('flixel/fonts/monsterrat.ttf') format('truetype'),
+			url('flixel/fonts/monsterrat.svg#Monsterrat') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		.container {
+			margin: 0 auto 48px;
+			max-width: 800px;
+		}
+	</style>
+
+</head>
+<body>
+
+	<noscript>This webpage makes extensive use of JavaScript. Please enable JavaScript in your web browser to view this page.</noscript>
+
+	<div class="container">
+		<h1>Friday Night Funkin'</h1>
+		<p>Friday Night Funkin' (FNF) is a dope ass rhythm game.</p>
+		<p>This is a Genshin Impact mod of FNF featuring Kaeya and Keqing.</p>
+		<p><a href="#openfl-content">Click to scroll to game</a></p>
+		<h2>Controls</h2>
+		<ul>
+			<li>WASD / Arrow keys: Move</li>
+			<li>- and +: Change volume</li>
+			<li>0: Mute</li>
+			<li>Enter: Confirm selection (or pause during a level)</li>
+			<li>ESC: Go to previous menu</li>
+		</ul>
+		<p>The game pauses if you click outside the page. Just click the game again to resume.</p>
+		<h2>Credits</h2>
+		<p class='description'>
+			FNF was made by <a href="https://twitter.com/ninja_muffin99">ninjamuffin99 (programmer)</a>,
+			<a href="https://twitter.com/PhantomArcade3K">PhantomArcade (animator)</a>,
+			<a href="https://twitter.com/evilsk8r">evilsk8r (artist)</a>,
+			and <a href="https://twitter.com/kawaisprite">Kawaisprite (musician)</a>
+			originally for Ludum Dare 47.
+		</p>
+		<p>
+			Genshin art by <a href="https://twitter.com/xKurami">Kurxmi</a>.
+		</p>
+		<p>Additional code by <a href="https://zufengw.github.io/genshin">Inkplane.</a></p>
+	</div>
+
+	<div id="openfl-content"></div>
+
+	<script type="text/javascript">
+		lime.embed ("Funkin", "openfl-content", 1280, 720, { parameters: {} });
+	</script>
+
+</body>
+</html>
