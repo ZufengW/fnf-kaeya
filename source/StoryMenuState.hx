@@ -144,7 +144,9 @@ class StoryMenuState extends MusicBeatState
 
 		trace("Line 96");
 
-		for (char in 0...3)
+		// Only add the opponent character because bf and gf don't have Genshin
+		// art.
+		for (char in 0...1)
 		{
 			var weekCharacterThing:MenuCharacter = new MenuCharacter((FlxG.width * 0.25) * (1 + char) - 150, weekCharacters[curWeek][char]);
 			weekCharacterThing.y += 70;
@@ -300,7 +302,7 @@ class StoryMenuState extends MusicBeatState
 				FlxG.sound.play(Paths.sound('confirmMenu'));
 
 				grpWeekText.members[curWeek].startFlashing();
-				grpWeekCharacters.members[1].animation.play('bfConfirm');
+				// grpWeekCharacters.members[1].animation.play('bfConfirm');
 				stopspamming = true;
 			}
 
@@ -399,8 +401,8 @@ class StoryMenuState extends MusicBeatState
 	function updateText()
 	{
 		grpWeekCharacters.members[0].animation.play(weekCharacters[curWeek][0]);
-		grpWeekCharacters.members[1].animation.play(weekCharacters[curWeek][1]);
-		grpWeekCharacters.members[2].animation.play(weekCharacters[curWeek][2]);
+		// grpWeekCharacters.members[1].animation.play(weekCharacters[curWeek][1]);
+		// grpWeekCharacters.members[2].animation.play(weekCharacters[curWeek][2]);
 
 		switch (grpWeekCharacters.members[0].animation.curAnim.name)
 		{
