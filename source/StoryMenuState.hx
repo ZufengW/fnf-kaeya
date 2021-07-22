@@ -28,12 +28,12 @@ class StoryMenuState extends MusicBeatState
 		['Spookeez', 'South', "Monster"],
 		['Pico', 'Philly', "Blammed"],
 		['Satin-Panties', "High", "Milf"],
-		['Cocoa', 'Eggnog', 'Winter-Horrorland'],
-		['Senpai', 'Roses', 'Thorns']
+		// ['Cocoa', 'Eggnog', 'Winter-Horrorland'],
+		// ['Senpai', 'Roses', 'Thorns']
 	];
 	var curDifficulty:Int = 1;
 
-	public static var weekUnlocked:Array<Bool> = [true, true, true, true, true, true, true];
+	public static var weekUnlocked:Array<Bool> = [true, true, true, true, true];
 
 	var weekCharacters:Array<Dynamic> = [
 		['dad', 'bf', 'gf'],
@@ -41,8 +41,8 @@ class StoryMenuState extends MusicBeatState
 		['spooky', 'bf', 'gf'],
 		['pico', 'bf', 'gf'],
 		['mom', 'bf', 'gf'],
-		['parents-christmas', 'bf', 'gf'],
-		['senpai', 'bf', 'gf']
+		// ['parents-christmas', 'bf', 'gf'],
+		// ['senpai', 'bf', 'gf']
 	];
 
 	var weekNames:Array<String> = [
@@ -51,8 +51,8 @@ class StoryMenuState extends MusicBeatState
 		"Spooky Month",
 		"PICO",
 		"MOMMY MUST MURDER",
-		"RED SNOW",
-		"hating simulator ft. moawling"
+		// "RED SNOW",
+		// "hating simulator ft. moawling"
 	];
 
 	var txtWeekTitle:FlxText;
@@ -164,9 +164,9 @@ class StoryMenuState extends MusicBeatState
 					weekCharacterThing.updateHitbox();
 				case 'pico':
 					weekCharacterThing.flipX = true;
-				case 'parents-christmas':
-					weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.9));
-					weekCharacterThing.updateHitbox();
+				// case 'parents-christmas':
+				// 	weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.9));
+				// 	weekCharacterThing.updateHitbox();
 			}
 
 			grpWeekCharacters.add(weekCharacterThing);
@@ -405,13 +405,13 @@ class StoryMenuState extends MusicBeatState
 
 		switch (grpWeekCharacters.members[0].animation.curAnim.name)
 		{
-			case 'parents-christmas':
-				grpWeekCharacters.members[0].offset.set(200, 200);
-				grpWeekCharacters.members[0].setGraphicSize(Std.int(grpWeekCharacters.members[0].width * 0.99));
+			// case 'parents-christmas':
+			// 	grpWeekCharacters.members[0].offset.set(200, 200);
+			// 	grpWeekCharacters.members[0].setGraphicSize(Std.int(grpWeekCharacters.members[0].width * 0.99));
 
-			case 'senpai':
-				grpWeekCharacters.members[0].offset.set(130, 0);
-				grpWeekCharacters.members[0].setGraphicSize(Std.int(grpWeekCharacters.members[0].width * 1.4));
+			// case 'senpai':
+			// 	grpWeekCharacters.members[0].offset.set(130, 0);
+			// 	grpWeekCharacters.members[0].setGraphicSize(Std.int(grpWeekCharacters.members[0].width * 1.4));
 
 			case 'mom':
 				grpWeekCharacters.members[0].offset.set(100, 200);
