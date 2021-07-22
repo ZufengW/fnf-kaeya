@@ -112,7 +112,7 @@ class StoryMenuState extends MusicBeatState
 		add(grpLocks);
 
 		trace("Line 70");
-		
+
 		#if desktop
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
@@ -401,7 +401,6 @@ class StoryMenuState extends MusicBeatState
 		grpWeekCharacters.members[0].animation.play(weekCharacters[curWeek][0]);
 		grpWeekCharacters.members[1].animation.play(weekCharacters[curWeek][1]);
 		grpWeekCharacters.members[2].animation.play(weekCharacters[curWeek][2]);
-		txtTracklist.text = "Tracks\n";
 
 		switch (grpWeekCharacters.members[0].animation.curAnim.name)
 		{
@@ -427,14 +426,9 @@ class StoryMenuState extends MusicBeatState
 				// grpWeekCharacters.members[0].updateHitbox();
 		}
 
-		var stringThing:Array<String> = weekData[curWeek];
-
-		for (i in stringThing)
-		{
-			txtTracklist.text += "\n" + i;
-		}
-
-		txtTracklist.text = txtTracklist.text.toUpperCase();
+		// The last line is not visible unless I add the trailing \n.
+		var trackListMessage = "TRACKS\n\n" + weekData[curWeek].join("\n").toUpperCase() + "\n";
+		txtTracklist.text = trackListMessage;
 
 		txtTracklist.screenCenter(X);
 		txtTracklist.x -= FlxG.width * 0.35;
