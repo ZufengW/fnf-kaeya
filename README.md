@@ -101,14 +101,14 @@ As for Mac, 'lime test mac -debug' should work, if not the internet surely has a
 
 ## FNF Kaeya
 
-This is a Genshin Impact themed variant of FNF featuring Kaeya and Keqing.
+This is a Genshin Impact themed mod of FNF featuring Kaeya and Keqing.
 
 This started as a simple reskin using the [Genshin Impact Kaeya and Keqing Mod](https://gamebanana.com/mods/186822)
-by Kurxmi, but has since increased in complexity...
+by Kurxmi, but has since increased in complexity.
 
 ### Deploying to GitHub Pages
 
-1. In the project root, run `lime test windows -release`.
+1. In the project root, run `lime test html5 -release`.
 1. Replace `export/release/html5/bin/index.html` with `pages/index.html`.
 1. Make sure your working directory is clean.
 1. Run `./deploy.sh`.
