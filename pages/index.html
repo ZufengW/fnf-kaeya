@@ -347,6 +347,15 @@
 			numTouchWithoutClick = 0;
 			embedGameIfNeeded();
 		});
+
+		// Hack: Prevent Enter from opening anchors.
+		document.body.querySelectorAll('a').forEach(el => {
+			el.addEventListener('keydown', e => {
+				if(e.key === 'Enter') {
+					e.preventDefault();
+				}
+			});
+		});
 	</script>
 
 </body>
