@@ -302,23 +302,41 @@
 		// Enable or disable the touch controls based on the checkbox value.
 		const touchCheckbox = document.querySelector('#enable-touch');
 		const touchControlsContainer = document.querySelector('.touch-controls-container');
-		function updateControlsVisibility() {
-			if (touchCheckbox.checked) {
-				touchControlsContainer.classList.remove('hidden');
-			} else {
-				touchControlsContainer.classList.add('hidden');
-			}
-		}
 
 		/** Whether or not to enable touch controls. */
 		const ENABLE_TOUCH_STORAGE_KEY = 'fnf-kaeya-enable-touch';
 		touchCheckbox.addEventListener('input', () => {
-			updateControlsVisibility();
-			window.localStorage.setItem(ENABLE_TOUCH_STORAGE_KEY, touchCheckbox.checked ? 1 : 0);
+			updateTouchControls(touchCheckbox.checked);
 		});
-		touchCheckbox.checked = !!Number(window.localStorage.getItem(ENABLE_TOUCH_STORAGE_KEY));
 
-		updateControlsVisibility();
+		let enableTouchControls = !!Number(window.localStorage.getItem(ENABLE_TOUCH_STORAGE_KEY));
+		function updateTouchControls(newVal, forceUpdate) {
+			if (!forceUpdate && newVal === enableTouchControls) return;
+			enableTouchControls = newVal;
+			touchCheckbox.checked = enableTouchControls;
+			if (enableTouchControls) {
+				touchControlsContainer.classList.remove('hidden');
+			} else {
+				touchControlsContainer.classList.add('hidden');
+			}
+			window.localStorage.setItem(ENABLE_TOUCH_STORAGE_KEY, enableTouchControls ? 1 : 0);
+		}
+		updateTouchControls(enableTouchControls, true);
+
+		// If 2+ touchstart events happen in a row without click, enable touch
+		// controls.
+		let numTouchWithoutClick = 0;
+		document.body.addEventListener('touchstart', () => {
+			if (numTouchWithoutClick >= 2) {
+				updateTouchControls(true);
+				return;
+			}
+			++numTouchWithoutClick;
+		});
+		document.body.addEventListener('click', () => {
+			// Note that both click and touchstart happen on some touchscreens.
+			numTouchWithoutClick = 0;
+		});
 	</script>
 
 </body>
