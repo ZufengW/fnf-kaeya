@@ -233,7 +233,15 @@
 
 
 	<script type="text/javascript">
-		lime.embed("Funkin", "openfl-content", 1280, 720, { parameters: {} });
+		var isEmbedded = false;
+		// Hack: Only embed the game after the first interaction with the page, so
+		// audio is enabled.
+		function embedGameIfNeeded() {
+			if (!isEmbedded) {
+				lime.embed ("Funkin", "openfl-content", 1280, 720, { parameters: {} });
+				isEmbedded = true;
+			}
+		}
 
 		function createKeyEvent(kind) {
 			const e = new Event(kind);
@@ -327,6 +335,7 @@
 		// controls.
 		let numTouchWithoutClick = 0;
 		document.body.addEventListener('touchstart', () => {
+			embedGameIfNeeded();
 			if (numTouchWithoutClick >= 2) {
 				updateTouchControls(true);
 				return;
@@ -336,6 +345,7 @@
 		document.body.addEventListener('click', () => {
 			// Note that both click and touchstart happen on some touchscreens.
 			numTouchWithoutClick = 0;
+			embedGameIfNeeded();
 		});
 	</script>
 
