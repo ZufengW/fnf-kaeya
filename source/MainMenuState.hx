@@ -26,13 +26,16 @@ class MainMenuState extends MusicBeatState
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
 	#if !switch
-	var optionShit:Array<String> = ['story mode', 'freeplay', 'donate', 'options'];
+	var optionShit:Array<String> = ['story mode', 'freeplay', 'credits'];  // , 'donate', 'options'];
 	#else
 	var optionShit:Array<String> = ['story mode', 'freeplay'];
 	#end
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
+
+	/** The id for the "Credits" menu item. **/
+	final CREDITS_ID:Int = 2;
 
 	override function create()
 	{
@@ -82,6 +85,16 @@ class MainMenuState extends MusicBeatState
 
 		for (i in 0...optionShit.length)
 		{
+			if (i == CREDITS_ID) {
+				var creditsMenuItem:FlxText = new FlxText(0, 60 + ((i + 1) * 160), 0, "Credits", 64);
+				creditsMenuItem.setFormat("VCR OSD Mono", 64, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				creditsMenuItem.ID = CREDITS_ID;
+				creditsMenuItem.screenCenter(X);
+				creditsMenuItem.scrollFactor.set();
+				menuItems.add(creditsMenuItem);
+				continue;
+			}
+
 			var menuItem:FlxSprite = new FlxSprite(0, 60 + (i * 160));
 			menuItem.frames = tex;
 			menuItem.animation.addByPrefix('idle', optionShit[i] + " basic", 24);
@@ -185,6 +198,8 @@ class MainMenuState extends MusicBeatState
 										FlxTransitionableState.skipNextTransIn = true;
 										FlxTransitionableState.skipNextTransOut = true;
 										FlxG.switchState(new OptionsMenu());
+									case 'credits':
+										FlxG.switchState(new CreditsState());
 								}
 							});
 						}
@@ -212,6 +227,17 @@ class MainMenuState extends MusicBeatState
 
 		menuItems.forEach(function(spr:FlxSprite)
 		{
+			if (spr.ID == CREDITS_ID) {
+				// "Credits" does not have animations. Set text size instead.
+				var txt = cast(spr, FlxText);
+				if (spr.ID == curSelected) {
+					txt.setFormat("VCR OSD Mono", 64, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				} else {
+					txt.setFormat("VCR OSD Mono", 48, FlxColor.BLACK, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.WHITE);
+				}
+				return;
+			}
+
 			spr.animation.play('idle');
 
 			if (spr.ID == curSelected)

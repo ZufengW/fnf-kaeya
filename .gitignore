@@ -1,3 +1,7 @@
 export/
+.DS_Store
 .vscode/
 APIStuff.hx
+
+# Ignore additional songs.
+assets/songs/flaming-fry/
