@@ -62,6 +62,7 @@ class PlayState extends MusicBeatState
 	private var boyfriend:Boyfriend;
 
 	private var notes:FlxTypedGroup<Note>;
+	/** Notes that haven't spawned yet. **/
 	private var unspawnNotes:Array<Note> = [];
 
 	private var strumLine:FlxSprite;
@@ -104,6 +105,13 @@ class PlayState extends MusicBeatState
 	var limo:FlxSprite;
 	var grpLimoDancers:FlxTypedGroup<BackgroundDancer>;
 	var fastCar:FlxSprite;
+
+	/** Object pool for reusing score numbers. **/
+	var scoreNumsSprites:FlxTypedGroup<FlxSprite>;
+	/** Object pool for reusing ratings. **/
+	var ratingSprites:FlxTypedGroup<FlxSprite>;
+	/** Object pool for reusing combos. **/
+	var comboSprites:FlxTypedGroup<FlxSprite>;
 
 	var upperBoppers:FlxSprite;
 	var bottomBoppers:FlxSprite;
@@ -814,6 +822,11 @@ class PlayState extends MusicBeatState
 			}
 		}
 
+		// Init the object pools.
+		scoreNumsSprites = new FlxTypedGroup<FlxSprite>();
+		ratingSprites = new FlxTypedGroup<FlxSprite>();
+		comboSprites = new FlxTypedGroup<FlxSprite>();
+
 		super.create();
 	}
 
@@ -1130,7 +1143,7 @@ class PlayState extends MusicBeatState
 
 	function sortByShit(Obj1:Note, Obj2:Note):Int
 	{
-		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.strumTime, Obj2.strumTime);
+		return FlxSort.byValues(FlxSort.DESCENDING, Obj1.strumTime, Obj2.strumTime);
 	}
 
 	private function generateStaticArrows(player:Int):Void
@@ -1595,16 +1608,10 @@ class PlayState extends MusicBeatState
 			#end
 		}
 
-		if (unspawnNotes[0] != null)
+		while (unspawnNotes.length > 0
+				&& unspawnNotes[unspawnNotes.length - 1].strumTime - Conductor.songPosition < 1500)
 		{
-			if (unspawnNotes[0].strumTime - Conductor.songPosition < 1500)
-			{
-				var dunceNote:Note = unspawnNotes[0];
-				notes.add(dunceNote);
-
-				var index:Int = unspawnNotes.indexOf(dunceNote);
-				unspawnNotes.splice(index, 1);
-			}
+			notes.add(unspawnNotes.pop());
 		}
 
 		if (generatedMusic)
@@ -1791,12 +1798,17 @@ class PlayState extends MusicBeatState
 
 		var placement:String = Std.string(combo);
 
-		var coolText:FlxText = new FlxText(0, 0, 0, placement, 32);
-		coolText.screenCenter();
-		coolText.x = FlxG.width * 0.55;
+		// This text is never actually added.
+		// var coolText:FlxText = new FlxText(0, 0, 0, placement, 32);
+		// coolText.screenCenter();
+		// coolText.x = FlxG.width * 0.55;
 		//
+		var coolTextX = FlxG.width * 0.55;
 
-		var rating:FlxSprite = new FlxSprite();
+		var rating = ratingSprites.recycle(FlxSprite);
+		rating.alpha = 1;
+		rating.velocity.x = 0;
+		rating.velocity.y = 0;
 		var score:Int = 350;
 
 		var daRating:String = "sick";
@@ -1838,15 +1850,19 @@ class PlayState extends MusicBeatState
 
 		rating.loadGraphic(Paths.image(pixelShitPart1 + daRating + pixelShitPart2));
 		rating.screenCenter();
-		rating.x = coolText.x - 40;
+		rating.x = coolTextX - 40;
 		rating.y -= 60;
 		rating.acceleration.y = 550;
 		rating.velocity.y -= FlxG.random.int(140, 175);
 		rating.velocity.x -= FlxG.random.int(0, 10);
 
-		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));
+		var comboSpr = comboSprites.recycle(FlxSprite)
+			.loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));
+		comboSpr.alpha = 1;
+		comboSpr.velocity.x = 0;
+		comboSpr.velocity.y = 0;
 		comboSpr.screenCenter();
-		comboSpr.x = coolText.x;
+		comboSpr.x = coolTextX;
 		comboSpr.acceleration.y = 600;
 		comboSpr.velocity.y -= 150;
 
@@ -1878,9 +1894,13 @@ class PlayState extends MusicBeatState
 		var daLoop:Int = 0;
 		for (i in seperatedScore)
 		{
-			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
+			var numScore:FlxSprite = scoreNumsSprites.recycle(FlxSprite)
+				.loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
+			numScore.alpha = 1;
+			numScore.velocity.x = 0;
+			numScore.velocity.y = 0;
 			numScore.screenCenter();
-			numScore.x = coolText.x + (43 * daLoop) - 90;
+			numScore.x = coolTextX + (43 * daLoop) - 90;
 			numScore.y += 80;
 
 			if (!curStage.startsWith('school'))
@@ -1904,7 +1924,7 @@ class PlayState extends MusicBeatState
 			FlxTween.tween(numScore, {alpha: 0}, 0.2, {
 				onComplete: function(tween:FlxTween)
 				{
-					numScore.destroy();
+					numScore.kill();
 				},
 				startDelay: Conductor.crochet * 0.002
 			});
@@ -1916,7 +1936,7 @@ class PlayState extends MusicBeatState
 			trace(seperatedScore);
 		 */
 
-		coolText.text = Std.string(seperatedScore);
+		// coolText.text = Std.string(seperatedScore);
 		// add(coolText);
 
 		FlxTween.tween(rating, {alpha: 0}, 0.2, {
@@ -1926,10 +1946,8 @@ class PlayState extends MusicBeatState
 		FlxTween.tween(comboSpr, {alpha: 0}, 0.2, {
 			onComplete: function(tween:FlxTween)
 			{
-				coolText.destroy();
-				comboSpr.destroy();
-
-				rating.destroy();
+				comboSpr.kill();
+				rating.kill();
 			},
 			startDelay: Conductor.crochet * 0.001
 		});
