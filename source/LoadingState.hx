@@ -63,7 +63,12 @@ class LoadingState extends MusicBeatState
 				if (PlayState.SONG.needsVoices)
 					checkLoadSong(getVocalPath());
 				checkLibrary("shared");
-				if (PlayState.storyWeek > 0)
+				if (PlayState.storyWeek == 5)
+				{
+					// Week 5 is modded and uses week 1 (dad) assets instead.
+					checkLibrary("week1");
+				}
+				else if (PlayState.storyWeek > 0)
 					checkLibrary("week" + PlayState.storyWeek);
 				else
 					checkLibrary("tutorial");
