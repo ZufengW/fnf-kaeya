@@ -77,8 +77,11 @@ class Alphabet extends FlxSpriteGroup
 				lastWasSpace = true;
 			}
 
-			if (AlphaCharacter.alphabet.indexOf(character.toLowerCase()) != -1)
-				// if (AlphaCharacter.alphabet.contains(character.toLowerCase()))
+			// Don't include '-' as a symbol because it's meant to be a space.
+			final isSymbol = !lastWasSpace && AlphaCharacter.symbols
+					.contains(character.toLowerCase());
+
+			if (AlphaCharacter.alphabet.contains(character.toLowerCase()) || isSymbol)
 			{
 				if (lastSprite != null)
 				{
@@ -94,7 +97,9 @@ class Alphabet extends FlxSpriteGroup
 				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0);
 				var letter:AlphaCharacter = new AlphaCharacter(xPos, 0);
 
-				if (isBold)
+				if (isSymbol)
+					letter.createSymbol(character, isBold);
+				else if (isBold)
 					letter.createBold(character);
 				else
 				{
@@ -284,23 +289,28 @@ class AlphaCharacter extends FlxSprite
 		updateHitbox();
 	}
 
-	public function createSymbol(letter:String)
+	public function createSymbol(letter:String, ?bold=false)
 	{
+		final suffix = bold ? ' bold' : '';
 		switch (letter)
 		{
+			case ',':
+				animation.addByPrefix(letter, 'comma' + suffix, 24);
+				animation.play(letter);
+				y += 50;
 			case '.':
 				animation.addByPrefix(letter, 'period', 24);
 				animation.play(letter);
 				y += 50;
 			case "'":
-				animation.addByPrefix(letter, 'apostraphie', 24);
+				animation.addByPrefix(letter, 'apostraphie' + suffix, 24);
 				animation.play(letter);
 				y -= 0;
 			case "?":
 				animation.addByPrefix(letter, 'question mark', 24);
 				animation.play(letter);
 			case "!":
-				animation.addByPrefix(letter, 'exclamation point', 24);
+				animation.addByPrefix(letter, 'exclamation point' + suffix, 24);
 				animation.play(letter);
 		}
 
