@@ -1,5 +1,6 @@
 package;
 
+import Song.BeatEvent;
 import Song.SwagSong;
 
 /**
@@ -27,6 +28,9 @@ class Conductor
 	public static var safeZoneOffset:Float = (safeFrames / 60) * 1000; // is calculated in create(), is safeFrames in milliseconds
 
 	public static var bpmChangeMap:Array<BPMChangeEvent> = [];
+	/** List of all the beats in the song. Ordered by time. If provided, beat
+		timing won't be determined by bpm. **/
+	public static var beatList:Array<BeatEvent> = [];
 
 	public function new()
 	{
@@ -57,6 +61,18 @@ class Conductor
 			totalPos += ((60 / curBPM) * 1000 / 4) * deltaSteps;
 		}
 		trace("new BPM map BUDDY " + bpmChangeMap);
+
+		// Not all songs have a beat list.
+		beatList = [];
+		if (song.beats != null)
+		{
+			beatList = song.beats.map((b) -> {
+				return {
+					songTime: b[0],
+					kind: Std.int(b[1]),
+				};
+			});
+		}
 	}
 
 	public static function changeBPM(newBpm:Int)

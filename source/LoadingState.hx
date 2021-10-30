@@ -1,5 +1,6 @@
 package;
 
+import MusicBeatState.BeatKind;
 import lime.app.Promise;
 import lime.app.Future;
 import flixel.FlxG;
@@ -109,9 +110,9 @@ class LoadingState extends MusicBeatState
 		}
 	}
 
-	override function beatHit()
+	override function beatHit(kind:BeatKind)
 	{
-		super.beatHit();
+		super.beatHit(kind);
 
 		logo.animation.play('bump');
 		danceLeft = !danceLeft;

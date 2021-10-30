@@ -3,6 +3,7 @@ package;
 #if desktop
 import Discord.DiscordClient;
 #end
+import MusicBeatState.BeatKind;
 import Section.SwagSection;
 import Song.SwagSong;
 import WiggleEffect.WiggleEffectType;
@@ -1713,6 +1714,10 @@ class PlayState extends MusicBeatState
 		canPause = false;
 		FlxG.sound.music.volume = 0;
 		vocals.volume = 0;
+		// Clear the beat list to prevent the song's beats from happening after
+		// returning to the menu.
+		Conductor.beatList = [];
+
 		if (SONG.validScore)
 		{
 			#if !switch
@@ -2352,9 +2357,9 @@ class PlayState extends MusicBeatState
 		gf.playAnim('scared', true);
 	}
 
-	override function stepHit()
+	override function stepHit(kind:BeatKind)
 	{
-		super.stepHit();
+		super.stepHit(kind);
 		if (FlxG.sound.music.time > Conductor.songPosition + 20 || FlxG.sound.music.time < Conductor.songPosition - 20)
 		{
 			resyncVocals();
@@ -2369,9 +2374,9 @@ class PlayState extends MusicBeatState
 	var lightningStrikeBeat:Int = 0;
 	var lightningOffset:Int = 8;
 
-	override function beatHit()
+	override function beatHit(kind:BeatKind)
 	{
-		super.beatHit();
+		super.beatHit(kind);
 
 		if (generatedMusic)
 		{
@@ -2388,6 +2393,7 @@ class PlayState extends MusicBeatState
 			// else
 			// Conductor.changeBPM(SONG.bpm);
 
+			// TODO: Fix this for songs where every section is a mustHitSection.
 			// Dad doesnt interupt his own notes
 			if (SONG.notes[Math.floor(curStep / 16)].mustHitSection)
 				dad.dance();
@@ -2402,7 +2408,7 @@ class PlayState extends MusicBeatState
 			camHUD.zoom += 0.03;
 		}
 
-		if (camZooming && FlxG.camera.zoom < 1.35 && curBeat % 4 == 0)
+		if (camZooming && FlxG.camera.zoom < 1.35 && ((kind == Default && curBeat % 4 == 0) || kind == Major))
 		{
 			FlxG.camera.zoom += 0.015;
 			camHUD.zoom += 0.03;

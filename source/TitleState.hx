@@ -4,6 +4,7 @@ package;
 import Discord.DiscordClient;
 import sys.thread.Thread;
 #end
+import MusicBeatState.BeatKind;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -368,9 +369,9 @@ class TitleState extends MusicBeatState
 		}
 	}
 
-	override function beatHit()
+	override function beatHit(kind:BeatKind)
 	{
-		super.beatHit();
+		super.beatHit(kind);
 
 		logoBl.animation.play('bump');
 		danceLeft = !danceLeft;
