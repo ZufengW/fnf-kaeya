@@ -7,6 +7,14 @@ import lime.utils.Assets;
 
 using StringTools;
 
+typedef BeatEvent =
+{
+	/** Time since the start of the song. In milliseconds. **/
+	var songTime:Float;
+	/** 0: Minor. 1: Major. **/
+	var kind:Int;
+}
+
 typedef SwagSong =
 {
 	var song:String;
@@ -18,6 +26,8 @@ typedef SwagSong =
 	var player1:String;
 	var player2:String;
 	var validScore:Bool;
+	// Will be null for most songs. If provided, use this instead of bpm.
+	var ?beats:Array<Array<Float>>;
 }
 
 class Song

@@ -429,7 +429,8 @@ class StoryMenuState extends MusicBeatState
 		}
 
 		// The last line is not visible unless I add the trailing \n.
-		var trackListMessage = "TRACKS\n\n" + weekData[curWeek].join("\n").toUpperCase() + "\n";
+		var trackListMessage = "TRACKS\n\n"
+			+ StringTools.replace(weekData[curWeek].join("\n"), '-', ' ').toUpperCase() + "\n";
 		txtTracklist.text = trackListMessage;
 
 		txtTracklist.screenCenter(X);
