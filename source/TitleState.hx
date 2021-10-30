@@ -108,6 +108,9 @@ class TitleState extends MusicBeatState
 		titleText.animation.addByPrefix('press', "ENTER PRESSED", 24);
 		titleText.antialiasing = true;
 
+		credGroup = new FlxGroup();
+		textGroup = new FlxGroup();
+
 		new FlxTimer().start(1, function(tmr:FlxTimer)
 		{
 			startIntro();
@@ -201,9 +204,7 @@ class TitleState extends MusicBeatState
 		// FlxTween.tween(logoBl, {y: logoBl.y + 50}, 0.6, {ease: FlxEase.quadInOut, type: PINGPONG});
 		// FlxTween.tween(logo, {y: logoBl.y + 50}, 0.6, {ease: FlxEase.quadInOut, type: PINGPONG, startDelay: 0.1});
 
-		credGroup = new FlxGroup();
 		add(credGroup);
-		textGroup = new FlxGroup();
 
 		blackScreen = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		credGroup.add(blackScreen);
