@@ -2384,9 +2384,11 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, FlxSort.DESCENDING);
 		}
 
-		if (SONG.notes[Math.floor(curStep / 16)] != null)
+		final currentSectionIndex = Math.floor(curStep / 16);
+		final currentSection = SONG.notes[currentSectionIndex];
+		if (currentSection != null)
 		{
-			if (SONG.notes[Math.floor(curStep / 16)].changeBPM)
+			if (currentSection.changeBPM)
 			{
 				Conductor.changeBPM(SONG.notes[Math.floor(curStep / 16)].bpm);
 				FlxG.log.add('CHANGED BPM!');
@@ -2394,9 +2396,26 @@ class PlayState extends MusicBeatState
 			// else
 			// Conductor.changeBPM(SONG.bpm);
 
-			// TODO: Fix this for songs where every section is a mustHitSection.
-			// Dad doesnt interupt his own notes
-			if (SONG.notes[Math.floor(curStep / 16)].mustHitSection)
+			// Avoid interrupting dad's notes. Look for nearby notes in the
+			// adjacent three sections.
+			var dadHasNote = false;
+			for (i in currentSectionIndex-1...currentSectionIndex+2)
+			{
+				if (SONG.notes[i] != null && SONG.notes[i].mustHitSection)
+				{
+					for (note in SONG.notes[i].sectionNotes)
+					{
+						if (note[1] > 3 && note[0] > Conductor.songPosition - 100
+							&& note[0] < Conductor.songPosition + 100)
+						{
+							dadHasNote = true;
+							break;
+						}
+					}
+				}
+				if (dadHasNote) break;
+			}
+			if (currentSection.mustHitSection && !dadHasNote)
 				dad.dance();
 		}
 		// FlxG.log.add('change bpm' + SONG.notes[Std.int(curStep / 16)].changeBPM);
