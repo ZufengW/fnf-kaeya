@@ -7,7 +7,6 @@ import flixel.FlxSprite;
 import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.input.keyboard.FlxKey;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
@@ -22,6 +21,10 @@ class PauseSubState extends MusicBeatSubstate
 	var curSelected:Int = 0;
 
 	var pauseMusic:FlxSound;
+
+	/** Whether or not the user is allowed to unpause. Used to prevent the state
+		from closing immediately. **/
+	var canUnpause = false;
 
 	public function new(x:Float, y:Float)
 	{
@@ -98,7 +101,13 @@ class PauseSubState extends MusicBeatSubstate
 			changeSelection(1);
 		}
 
-		if (accepted)
+		// Also check the volume to ensure pause lasts at least 0.25 seconds.
+		if (!canUnpause && !accepted && !controls.BACK && pauseMusic.volume > 0.0025)
+		{
+			canUnpause = true;
+		}
+
+		if (canUnpause && accepted)
 		{
 			var daSelected:String = menuItems[curSelected];
 
@@ -111,6 +120,11 @@ class PauseSubState extends MusicBeatSubstate
 				case "Exit to menu":
 					FlxG.switchState(new MainMenuState());
 			}
+		}
+		else if (canUnpause && controls.BACK)
+		{
+			close();
+			return;
 		}
 
 		if (FlxG.keys.justPressed.J)

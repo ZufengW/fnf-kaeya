@@ -1380,7 +1380,7 @@ class PlayState extends MusicBeatState
 
 		scoreTxt.text = "Score:" + songScore;
 
-		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
+		if (!paused && (controls.BACK || controls.ACCEPT) && startedCountdown && canPause)
 		{
 			persistentUpdate = false;
 			persistentDraw = true;
