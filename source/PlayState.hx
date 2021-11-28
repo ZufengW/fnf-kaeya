@@ -927,12 +927,14 @@ class PlayState extends MusicBeatState
 
 		talking = false;
 		startedCountdown = true;
-		Conductor.songPosition = 0;
-		Conductor.songPosition -= Conductor.crochet * 5;
+		// Perform 5 beats before the first beat.
+		Conductor.songPosition = Conductor.getZeroBeatCrochetMs()
+			- 5 * Conductor.getFirstBeatCrochetMs();
 
 		var swagCounter:Int = 0;
 
-		startTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
+		final timerDelayS = Conductor.getFirstBeatCrochetMs() / 1000;
+		startTimer = new FlxTimer().start(timerDelayS, function(tmr:FlxTimer)
 		{
 			dad.dance();
 			gf.dance();
@@ -956,7 +958,6 @@ class PlayState extends MusicBeatState
 			}
 
 			switch (swagCounter)
-
 			{
 				case 0:
 					FlxG.sound.play(Paths.sound('intro3'), 0.6);
@@ -1332,7 +1333,7 @@ class PlayState extends MusicBeatState
 		super.onFocusLost();
 	}
 
-	function resyncVocals():Void
+	private function resyncVocals():Void
 	{
 		vocals.pause();
 
