@@ -63,6 +63,10 @@ class ControlsSubState extends MusicBeatSubstate {
 		super.update(elapsed);
 
 		if (isSettingControl) {
+			if (controls.BACK) {
+				isSettingControl = false;
+				return;
+			}
 			if (FlxG.keys.anyJustPressed([ANY]) && FlxG.keys.getIsDown().length > 0) {
 				final result = get_controls().setCustomControlKey(
 						curSelectedControl, FlxG.keys.getIsDown()[0].ID);
@@ -81,7 +85,9 @@ class ControlsSubState extends MusicBeatSubstate {
 			if (!isSettingControl) {
 				if (curSelectedControl != null) {
 					isSettingControl = true;
-					headingText.text = 'Press the new key';
+					headingText.text = 'Press the new key. '
+						+ controls.getDialogueNameForControl(BACK)
+						+ ' to cancel';
 				} else {
 					get_controls().resetCustomControlKeys();
 					updateControlsText();
