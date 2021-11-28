@@ -66,5 +66,7 @@ class OptionsSubState extends MusicBeatSubstate
 					FlxG.state.openSubState(new ControlsSubState());
 			}
 		}
+		else if (controls.BACK)
+			FlxG.switchState(new MainMenuState());
 	}
 }

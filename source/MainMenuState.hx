@@ -26,7 +26,7 @@ class MainMenuState extends MusicBeatState
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
 	#if !switch
-	var optionShit:Array<String> = ['story mode', 'freeplay', 'credits'];  // , 'donate', 'options'];
+	var optionShit:Array<String> = ['story mode', 'freeplay', 'options', 'credits'];  // , 'donate'];
 	#else
 	var optionShit:Array<String> = ['story mode', 'freeplay'];
 	#end
@@ -35,7 +35,7 @@ class MainMenuState extends MusicBeatState
 	var camFollow:FlxObject;
 
 	/** The id for the "Credits" menu item. **/
-	final CREDITS_ID:Int = 2;
+	final CREDITS_ID:Int = 3;
 
 	override function create()
 	{
@@ -86,7 +86,7 @@ class MainMenuState extends MusicBeatState
 		for (i in 0...optionShit.length)
 		{
 			if (i == CREDITS_ID) {
-				var creditsMenuItem:FlxText = new FlxText(0, 60 + ((i + 1) * 160), 0, "Credits", 64);
+				var creditsMenuItem:FlxText = new FlxText(0, 60 + (i * 160), 0, "Credits", 64);
 				creditsMenuItem.setFormat("VCR OSD Mono", 64, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 				creditsMenuItem.ID = CREDITS_ID;
 				creditsMenuItem.screenCenter(X);
