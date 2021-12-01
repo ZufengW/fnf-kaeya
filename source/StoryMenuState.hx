@@ -208,8 +208,8 @@ class StoryMenuState extends MusicBeatState
 		add(yellowBG);
 		add(grpWeekCharacters);
 
-		txtTracklist = new FlxText(FlxG.width * 0.05, yellowBG.x + yellowBG.height + 100, 0, "Tracks", 32);
-		txtTracklist.alignment = CENTER;
+		txtTracklist = new FlxText(FlxG.width * 0.025, yellowBG.x + yellowBG.height + 100, 0, "Tracks", 32);
+		txtTracklist.alignment = LEFT;
 		txtTracklist.font = rankText.font;
 		txtTracklist.color = 0xFFe55777;
 		add(txtTracklist);
@@ -432,9 +432,6 @@ class StoryMenuState extends MusicBeatState
 		var trackListMessage = "TRACKS\n\n"
 			+ StringTools.replace(weekData[curWeek].join("\n"), '-', ' ').toUpperCase() + "\n";
 		txtTracklist.text = trackListMessage;
-
-		txtTracklist.screenCenter(X);
-		txtTracklist.x -= FlxG.width * 0.35;
 
 		#if !switch
 		intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
