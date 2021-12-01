@@ -22,35 +22,40 @@ class StoryMenuState extends MusicBeatState
 {
 	var scoreText:FlxText;
 
-	var weekData:Array<Dynamic> = [
+	final weekData:Array<Array<String>> = [
 		['Tutorial'],
 		['Bopeebo', 'Fresh', 'Dadbattle'],
 		['Spookeez', 'South', "Monster"],
 		['Pico', 'Philly', "Blammed"],
 		['Satin-Panties', "High", "Milf"],
+		['Flaming-Fry', 'Let\'s-Go,-Crimson-Knight!', 'Bard\'s-Adventure'],
 		// ['Cocoa', 'Eggnog', 'Winter-Horrorland'],
 		// ['Senpai', 'Roses', 'Thorns']
 	];
 	var curDifficulty:Int = 1;
 
-	public static var weekUnlocked:Array<Bool> = [true, true, true, true, true];
+	public static var weekUnlocked:Array<Bool> = [
+		true, true, true, true, true, true
+	];
 
-	var weekCharacters:Array<Dynamic> = [
+	final weekCharacters:Array<Array<String>> = [
 		['dad', 'bf', 'gf'],
 		['dad', 'bf', 'gf'],
 		['spooky', 'bf', 'gf'],
 		['pico', 'bf', 'gf'],
 		['mom', 'bf', 'gf'],
+		['dad', 'bf', 'gf'],
 		// ['parents-christmas', 'bf', 'gf'],
 		// ['senpai', 'bf', 'gf']
 	];
 
-	var weekNames:Array<String> = [
+	final weekNames:Array<String> = [
 		"",
 		"Daddy Dearest",
 		"Spooky Month",
 		"PICO",
 		"MOMMY MUST MURDER",
+		"Nice and spicy",
 		// "RED SNOW",
 		// "hating simulator ft. moawling"
 	];
