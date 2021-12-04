@@ -112,6 +112,132 @@ class Controls extends FlxActionSet
 	var _reset = new FlxActionDigital(Action.RESET);
 	var _cheat = new FlxActionDigital(Action.CHEAT);
 
+	/** Keeps track of the user's custom keybindings. Persisted between
+		sessions. **/
+	final customControlKeys: Map<Control, FlxKey> = new Map<Control, FlxKey>();
+
+	/** Controls that the user can configure. **/
+	public static final CUSTOMIZABLE_CONTROLS: Array<Control> = [
+		LEFT, DOWN, UP, RIGHT, ACCEPT, BACK, RESET
+	];
+	/** Default keys for the customizable controls. **/
+	private static final DEFAULT_BINDINGS = [
+		LEFT => A,
+		DOWN => S,
+		UP => W,
+		RIGHT => D,
+		ACCEPT => Z,
+		BACK => BACKSPACE,
+		RESET => R,
+	];
+
+	/** Don't let the user bind to these keys because they overlap with
+		important controls. **/
+	private static final RESERVED_KEYS: Array<FlxKey> = [
+		ENTER, ESCAPE, SPACE, FlxKey.LEFT, FlxKey.DOWN, FlxKey.UP, FlxKey.RIGHT
+	];
+
+	/** Load the user's custom keybindings. Don't call this too early, otherwise
+		it won't get the saved values. **/
+	public function loadCustomControlKeys()
+	{
+		if (FlxG.save.data.customControlKeys != null)
+		{
+			final customControlKeysSerialized: Map<String, String>
+				= FlxG.save.data.customControlKeys;
+			for (controlName in customControlKeysSerialized.keys())
+			{
+				final control = getControlFromString(controlName);
+				if (control == null) continue;
+				customControlKeys.set(control, FlxKey.fromString(
+						customControlKeysSerialized.get(controlName)));
+			}
+		}
+		for (control in CUSTOMIZABLE_CONTROLS)
+		{
+			if (customControlKeys.get(control) == null)
+			{
+				// Write default values to fill the gaps if needed.
+				customControlKeys.set(control, DEFAULT_BINDINGS.get(control));
+			}
+			replaceBinding(control, Keys, customControlKeys.get(control),
+					DEFAULT_BINDINGS.get(control));
+		}
+	}
+
+	public function saveCustomControlKeys()
+	{
+		// Convert customControlKeys to Map<String, String>.
+		final customControlKeysSerialized: Map<String, String>
+				= new Map<String, String>();
+		for (control in customControlKeys.keys())
+		{
+			final value = FlxKey.toStringMap.get(customControlKeys.get(control));
+			customControlKeysSerialized.set(control.getName(), value);
+		}
+		FlxG.save.data.customControlKeys = customControlKeysSerialized;
+		FlxG.save.flush();
+	}
+
+	/** Reset the keybindings to default values. **/
+	public function resetCustomControlKeys()
+	{
+		for (control in CUSTOMIZABLE_CONTROLS)
+		{
+			final prevValue = customControlKeys.get(control);
+			customControlKeys.set(control, DEFAULT_BINDINGS.get(control));
+			replaceBinding(control, Keys, customControlKeys.get(control),
+					prevValue);
+		}
+		saveCustomControlKeys();
+	}
+
+	/** Get the display name of the control and key. **/
+	public function getCustomControlNameAndKey(control: Control): String
+	{
+		final actionKeyValue = getDialogueName(getActionFromControl(control));
+		return control.getName() + ': ' + actionKeyValue;
+	}
+
+	/** Set the key binding for a control. Returns true if it worked. False if
+		reserved key. **/
+	public function setCustomControlKey(control: Control, binding: FlxKey): Bool
+	{
+		if (RESERVED_KEYS.contains(binding)) return false;
+
+		final prevValue = customControlKeys.get(control);
+		customControlKeys.set(control, binding);
+		replaceBinding(control, Keys, binding, prevValue);
+
+		saveCustomControlKeys();
+		return true;
+	}
+
+	/** Get a list of controls that share the same custom keybindings. **/
+	public function getOverlappingControls():Array<Control>
+	{
+		// Build a mapping from Key to the Controls that use it.
+		final controlsUsingKey: Map<FlxKey,Array<Control>>
+				= new Map<FlxKey,Array<Control>>();
+		for (control in customControlKeys.keys())
+		{
+			final value = customControlKeys.get(control);
+			if (controlsUsingKey.get(value) == null)
+			{
+				controlsUsingKey.set(value, []);
+			}
+			controlsUsingKey.get(value).push(control);
+		}
+		final overlappingControls:Array<Control> = [];
+		for (k in controlsUsingKey.keys())
+		{
+			final controls = controlsUsingKey.get(k);
+			if (controls.length <= 1) continue;
+			for (control in controls) overlappingControls.push(control);
+		}
+		return overlappingControls;
+	}
+
 	#if (haxe >= "4.0.0")
 	var byName:Map<String, FlxActionDigital> = [];
 	#else
@@ -259,7 +385,7 @@ class Controls extends FlxActionSet
 
 		for (action in digitalActions)
 			byName[action.name] = action;
-			
+
 		if (scheme == null)
 			scheme = None;
 		setKeyboardScheme(scheme, false);
@@ -281,9 +407,12 @@ class Controls extends FlxActionSet
 		return byName[name].check();
 	}
 
+	/** Get the printable string of the key binded to the action. **/
 	public function getDialogueName(action:FlxActionDigital):String
 	{
-		var input = action.inputs[0];
+		// When there are multiple inputs, use the last one in the list because
+		// it's the most recently modified.
+		var input = action.inputs[action.inputs.length - 1];
 		return switch input.device
 		{
 			case KEYBOARD: return '[${(input.inputID : FlxKey)}]';
@@ -295,6 +424,12 @@ class Controls extends FlxActionSet
 	public function getDialogueNameFromToken(token:String):String
 	{
 		return getDialogueName(getActionFromControl(Control.createByName(token.toUpperCase())));
+	}
+
+	/** Get the printable string of the current keybinding for the control. **/
+	public function getDialogueNameForControl(control:Control):String
+	{
+		return getDialogueName(getActionFromControl(control));
 	}
 
 	function getActionFromControl(control:Control):FlxActionDigital
@@ -310,6 +445,19 @@ class Controls extends FlxActionSet
 			case PAUSE: _pause;
 			case RESET: _reset;
 			case CHEAT: _cheat;
+		}
+	}
+
+	/** Get the Control from the string name. Null if not found. **/
+	function getControlFromString(controlName:String):Null<Control>
+	{
+		try
+		{
+			return Control.createByName(controlName);
+		}
+		catch(e:haxe.Exception)
+		{
+			return null;
 		}
 	}
 
@@ -493,19 +641,19 @@ class Controls extends FlxActionSet
 			removeKeyboard();
 
 		keyboardScheme = scheme;
-		
+
 		#if (haxe >= "4.0.0")
 		switch (scheme)
 		{
 			case Solo:
-				inline bindKeys(Control.UP, [W, FlxKey.UP]);
-				inline bindKeys(Control.DOWN, [S, FlxKey.DOWN]);
-				inline bindKeys(Control.LEFT, [A, FlxKey.LEFT]);
-				inline bindKeys(Control.RIGHT, [D, FlxKey.RIGHT]);
-				inline bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
-				inline bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
-				inline bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
-				inline bindKeys(Control.RESET, [R]);
+				inline bindKeys(Control.UP, [FlxKey.UP, DEFAULT_BINDINGS[Control.UP]]);
+				inline bindKeys(Control.DOWN, [FlxKey.DOWN, DEFAULT_BINDINGS[Control.DOWN]]);
+				inline bindKeys(Control.LEFT, [FlxKey.LEFT, DEFAULT_BINDINGS[Control.LEFT]]);
+				inline bindKeys(Control.RIGHT, [FlxKey.RIGHT, DEFAULT_BINDINGS[Control.RIGHT]]);
+				inline bindKeys(Control.ACCEPT, [SPACE, ENTER, DEFAULT_BINDINGS[Control.ACCEPT]]);
+				inline bindKeys(Control.BACK, [ESCAPE, DEFAULT_BINDINGS[Control.BACK]]);
+				inline bindKeys(Control.PAUSE, [ENTER, ESCAPE, DEFAULT_BINDINGS[Control.PAUSE]]);
+				inline bindKeys(Control.RESET, [DEFAULT_BINDINGS[Control.RESET]]);
 			case Duo(true):
 				inline bindKeys(Control.UP, [W]);
 				inline bindKeys(Control.DOWN, [S]);
@@ -531,14 +679,14 @@ class Controls extends FlxActionSet
 		switch (scheme)
 		{
 			case Solo:
-				bindKeys(Control.UP, [W, FlxKey.UP]);
-				bindKeys(Control.DOWN, [S, FlxKey.DOWN]);
-				bindKeys(Control.LEFT, [A, FlxKey.LEFT]);
-				bindKeys(Control.RIGHT, [D, FlxKey.RIGHT]);
-				bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
-				bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
-				bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
-				bindKeys(Control.RESET, [R]);
+				bindKeys(Control.UP, [FlxKey.UP, DEFAULT_BINDINGS[Control.UP]]);
+				bindKeys(Control.DOWN, [FlxKey.DOWN, DEFAULT_BINDINGS[Control.DOWN]]);
+				bindKeys(Control.LEFT, [FlxKey.LEFT, DEFAULT_BINDINGS[Control.LEFT]]);
+				bindKeys(Control.RIGHT, [FlxKey.RIGHT, DEFAULT_BINDINGS[Control.RIGHT]]);
+				bindKeys(Control.ACCEPT, [SPACE, ENTER, DEFAULT_BINDINGS[Control.ACCEPT]]);
+				bindKeys(Control.BACK, [ESCAPE, DEFAULT_BINDINGS[Control.BACK]]);
+				bindKeys(Control.PAUSE, [ENTER, ESCAPE, DEFAULT_BINDINGS[Control.PAUSE]]);
+				bindKeys(Control.RESET, [DEFAULT_BINDINGS[Control.RESET]]);
 			case Duo(true):
 				bindKeys(Control.UP, [W]);
 				bindKeys(Control.DOWN, [S]);
@@ -580,7 +728,7 @@ class Controls extends FlxActionSet
 	public function addGamepad(id:Int, ?buttonMap:Map<Control, Array<FlxGamepadInputID>>):Void
 	{
 		gamepadsAdded.push(id);
-		
+
 		#if (haxe >= "4.0.0")
 		for (control => buttons in buttonMap)
 			inline bindButtons(control, id, buttons);

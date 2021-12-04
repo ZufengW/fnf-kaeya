@@ -82,4 +82,22 @@ class Conductor
 		crochet = ((60 / bpm) * 1000);
 		stepCrochet = crochet / 4;
 	}
+
+	/** Get the duration in ms of a crochet at the start of the song. If the
+		song does not have a beatList, returns the duration of a regular
+		crochet. **/
+	public static function getFirstBeatCrochetMs(): Float
+	{
+		if (beatList.length < 2) return crochet;
+		return beatList[1].songTime - beatList[0].songTime;
+	}
+
+	/** Get the position of the zero beat (in ms after the start of the song).
+		The final beat of the countdown should land here. And the song's first
+		beat comes after. Can be negative. **/
+	public static function getZeroBeatCrochetMs(): Float
+	{
+		if (beatList.length < 1) return 0;
+		return beatList[0].songTime - getFirstBeatCrochetMs();
+	}
 }

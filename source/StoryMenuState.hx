@@ -22,35 +22,40 @@ class StoryMenuState extends MusicBeatState
 {
 	var scoreText:FlxText;
 
-	var weekData:Array<Dynamic> = [
+	final weekData:Array<Array<String>> = [
 		['Tutorial'],
 		['Bopeebo', 'Fresh', 'Dadbattle'],
 		['Spookeez', 'South', "Monster"],
 		['Pico', 'Philly', "Blammed"],
 		['Satin-Panties', "High", "Milf"],
+		['Flaming-Fry', 'Let\'s-Go,-Crimson-Knight!', 'Bard\'s-Adventure'],
 		// ['Cocoa', 'Eggnog', 'Winter-Horrorland'],
 		// ['Senpai', 'Roses', 'Thorns']
 	];
 	var curDifficulty:Int = 1;
 
-	public static var weekUnlocked:Array<Bool> = [true, true, true, true, true];
+	public static var weekUnlocked:Array<Bool> = [
+		true, true, true, true, true, true
+	];
 
-	var weekCharacters:Array<Dynamic> = [
+	final weekCharacters:Array<Array<String>> = [
 		['dad', 'bf', 'gf'],
 		['dad', 'bf', 'gf'],
 		['spooky', 'bf', 'gf'],
 		['pico', 'bf', 'gf'],
 		['mom', 'bf', 'gf'],
+		['dad', 'bf', 'gf'],
 		// ['parents-christmas', 'bf', 'gf'],
 		// ['senpai', 'bf', 'gf']
 	];
 
-	var weekNames:Array<String> = [
+	final weekNames:Array<String> = [
 		"",
 		"Daddy Dearest",
 		"Spooky Month",
 		"PICO",
 		"MOMMY MUST MURDER",
+		"Nice and spicy",
 		// "RED SNOW",
 		// "hating simulator ft. moawling"
 	];
@@ -208,8 +213,8 @@ class StoryMenuState extends MusicBeatState
 		add(yellowBG);
 		add(grpWeekCharacters);
 
-		txtTracklist = new FlxText(FlxG.width * 0.05, yellowBG.x + yellowBG.height + 100, 0, "Tracks", 32);
-		txtTracklist.alignment = CENTER;
+		txtTracklist = new FlxText(FlxG.width * 0.025, yellowBG.x + yellowBG.height + 100, 0, "Tracks", 32);
+		txtTracklist.alignment = LEFT;
 		txtTracklist.font = rankText.font;
 		txtTracklist.color = 0xFFe55777;
 		add(txtTracklist);
@@ -432,9 +437,6 @@ class StoryMenuState extends MusicBeatState
 		var trackListMessage = "TRACKS\n\n"
 			+ StringTools.replace(weekData[curWeek].join("\n"), '-', ' ').toUpperCase() + "\n";
 		txtTracklist.text = trackListMessage;
-
-		txtTracklist.screenCenter(X);
-		txtTracklist.x -= FlxG.width * 0.35;
 
 		#if !switch
 		intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);

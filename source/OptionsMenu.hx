@@ -32,7 +32,7 @@ class OptionsMenu extends MusicBeatState
 		menuBG.antialiasing = true;
 		add(menuBG);
 
-		/* 
+		/*
 			grpControls = new FlxTypedGroup<Alphabet>();
 			add(grpControls);
 
@@ -51,14 +51,16 @@ class OptionsMenu extends MusicBeatState
 
 		super.create();
 
-		openSubState(new OptionsSubState());
+		// Go straight to Controls because it's the only functioning part of the
+		// options menu.
+		openSubState(new ControlsSubState());
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		/* 
+		/*
 			if (controls.ACCEPT)
 			{
 				changeBinding();

@@ -74,6 +74,10 @@ class MusicBeatState extends FlxUIState
 				{
 					prevBeatTimeMs = Conductor.beatList[curBeat - 1].songTime;
 				}
+				else
+				{
+					prevBeatTimeMs = Conductor.getZeroBeatCrochetMs();
+				}
 			}
 			// Divide the time diff between the next and prev beat into
 			// quarters. These are the steps.
@@ -82,8 +86,10 @@ class MusicBeatState extends FlxUIState
 
 			if (Conductor.songPosition >= nextStepTimeMs)
 			{
-				stepHit(nextBeatKind);
-				if (quarter == 0)
+				// Do not call stepHit before time 0 because it causes the
+				// songPosition to resync.
+				if (nextStepTimeMs >= 0) stepHit(nextBeatKind);
+				if (quarter == 4)
 				{
 					beatHit(nextBeatKind);
 					curBeat++;

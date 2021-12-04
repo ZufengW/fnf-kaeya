@@ -111,6 +111,8 @@ class TitleState extends MusicBeatState
 		credGroup = new FlxGroup();
 		textGroup = new FlxGroup();
 
+		get_controls().loadCustomControlKeys();
+
 		new FlxTimer().start(1, function(tmr:FlxTimer)
 		{
 			startIntro();
