@@ -14,6 +14,9 @@ class Paths
 	static public function setCurrentLevel(name:String)
 	{
 		currentLevel = name.toLowerCase();
+
+		// Needed because week6 uses week4 assets.
+		if (currentLevel == 'week6') currentLevel = 'week4';
 	}
 
 	static function getPath(file:String, type:AssetType, library:Null<String>)

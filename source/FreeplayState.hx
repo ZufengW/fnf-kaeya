@@ -75,6 +75,8 @@ class FreeplayState extends MusicBeatState
 
 		addWeek(['Flaming-Fry', 'Let\'s-Go,-Crimson-Knight!', 'Bard\'s-Adventure'], 5, ['dad']);
 
+		addWeek(['Rockin\'-With-Fire'], 6, ['mom']);
+
 		// if (StoryMenuState.weekUnlocked[5] || isDebug)
 		// 	addWeek(['Cocoa', 'Eggnog', 'Winter-Horrorland'], 5, ['parents-christmas', 'parents-christmas', 'monster-christmas']);
 

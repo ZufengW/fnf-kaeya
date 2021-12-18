@@ -167,6 +167,9 @@ class PlayState extends MusicBeatState
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
 
+		this.lastP2NoteEndTimeMs = 0;
+		this.firstSectionIndexNotCheckedForP2Notes = 0;
+
 		switch (SONG.song.toLowerCase())
 		{
 			case 'tutorial':
@@ -297,7 +300,7 @@ class PlayState extends MusicBeatState
 		                  var street:FlxSprite = new FlxSprite(-40, streetBehind.y).loadGraphic(Paths.image('philly/street'));
 	                          add(street);
 		          }
-		          case 'milf' | 'satin-panties' | 'high':
+		          case 'milf' | 'satin-panties' | 'high' | 'rockin\'-with-fire':
 		          {
 		                  curStage = 'limo';
 		                  defaultCamZoom = 0.90;
@@ -2376,6 +2379,13 @@ class PlayState extends MusicBeatState
 	var lightningStrikeBeat:Int = 0;
 	var lightningOffset:Int = 8;
 
+	/** The final note end time in all the sections checked so far. Used to
+		determine if player2 should dance. **/
+	private var lastP2NoteEndTimeMs = 0;
+	/** The earliest section index where we haven't yet checked for player2
+		notes. **/
+	private var firstSectionIndexNotCheckedForP2Notes = 0;
+
 	override function beatHit(kind:BeatKind)
 	{
 		super.beatHit(kind);
@@ -2397,27 +2407,17 @@ class PlayState extends MusicBeatState
 			// else
 			// Conductor.changeBPM(SONG.bpm);
 
-			// Avoid interrupting dad's notes. Look for nearby notes in the
-			// adjacent three sections.
-			var dadHasNote = false;
-			for (i in currentSectionIndex-1...currentSectionIndex+2)
+			// Player2 does not dance during their own section. They can dance
+			// during Player1's section if they don't have notes.
+			if (currentSection.mustHitSection && !this.player2HasNote(currentSectionIndex))
 			{
-				if (SONG.notes[i] != null && SONG.notes[i].mustHitSection)
-				{
-					for (note in SONG.notes[i].sectionNotes)
-					{
-						if (note[1] > 3 && note[0] > Conductor.songPosition - 100
-							&& note[0] < Conductor.songPosition + 100)
-						{
-							dadHasNote = true;
-							break;
-						}
-					}
-				}
-				if (dadHasNote) break;
-			}
-			if (currentSection.mustHitSection && !dadHasNote)
 				dad.dance();
+			}
+		}
+		// Let player2 keep dancing after the final section.
+		else if (Conductor.songPosition - this.lastP2NoteEndTimeMs > 500)
+		{
+			dad.dance();
 		}
 		// FlxG.log.add('change bpm' + SONG.notes[Std.int(curStep / 16)].changeBPM);
 		wiggleShit.update(Conductor.crochet);
@@ -2511,4 +2511,76 @@ class PlayState extends MusicBeatState
 	}
 
 	var curLight:Int = 0;
+
+	/** Returns whether or not player2 has notes near the section. If true,
+		player2 should not dance. **/
+	private function player2HasNote(sectionIndex: Int): Bool {
+		// Look for player2's most recent end time of each kind of note.
+		// We need to look for each kind of note because sustained notes can
+		// go past notes on the other tracks.
+		// Assumption: a sustained note will never go past the next note in
+		// the same track.
+		final noteEndTimes = [0, 0, 0, 0];
+		var i = sectionIndex;
+		while (i >= this.firstSectionIndexNotCheckedForP2Notes)
+		{
+			for (sectionNote in SONG.notes[i].sectionNotes)
+			{
+				final startTime = sectionNote[0];
+				final endTime = sectionNote[2];
+				final isMustHitSection = SONG.notes[i].mustHitSection;
+				// Skip player1's notes.
+				if (isMustHitSection && sectionNote[1] < 4) continue;
+				else if (!isMustHitSection && sectionNote[1] >= 4) continue;
+				final noteId = isMustHitSection
+					? Std.int(sectionNote[1] - 4) : Std.int(sectionNote[1]);
+				if (noteEndTimes[noteId] < startTime + endTime)
+				{
+					noteEndTimes[noteId] = startTime + endTime;
+				}
+			}
+			// Stop searching if all noteEndTimes found.
+			var allEndTimesFound = true;
+			for (endTime in noteEndTimes)
+			{
+				if (endTime == 0)
+				{
+					allEndTimesFound = false;
+					break;
+				}
+			}
+			if (allEndTimesFound) break;
+
+			i -= 1;
+		}
+		this.firstSectionIndexNotCheckedForP2Notes = sectionIndex + 1;
+		for (t in noteEndTimes)
+		{
+			if (this.lastP2NoteEndTimeMs < t) this.lastP2NoteEndTimeMs = t;
+		}
+		// If the last note ended less than 500ms ago (or the last note is
+		// ongoing), don't dance.
+		if (Conductor.songPosition - this.lastP2NoteEndTimeMs < 500)
+		{
+			return true;
+		}
+
+		// Also look for when the next note starts.
+		final nextSectionIndex = sectionIndex + 1;
+		if (nextSectionIndex < SONG.notes.length)
+		{
+			for (sectionNote in SONG.notes[nextSectionIndex].sectionNotes)
+			{
+				final isMustHitSection = SONG.notes[nextSectionIndex].mustHitSection;
+				// Skip player1's notes.
+				if (isMustHitSection && sectionNote[1] < 4) continue;
+				else if (!isMustHitSection && sectionNote[1] >= 4) continue;
+				// Assume the first note is the earliest.
+				final startTime = sectionNote[0];
+				// If the next note starts <500ms from now, don't dance.
+				if (startTime - Conductor.songPosition < 500) return true;
+			}
+		}
+		return false;
+	}
 }
