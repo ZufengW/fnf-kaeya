@@ -69,6 +69,11 @@ class LoadingState extends MusicBeatState
 					// Week 5 is modded and uses week 1 (dad) assets instead.
 					checkLibrary("week1");
 				}
+				else if (PlayState.storyWeek == 6)
+				{
+					// Week 6 is modded and uses week 4 (mom) assets instead.
+					checkLibrary("week4");
+				}
 				else if (PlayState.storyWeek > 0)
 					checkLibrary("week" + PlayState.storyWeek);
 				else
