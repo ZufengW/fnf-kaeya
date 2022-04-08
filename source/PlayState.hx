@@ -300,7 +300,7 @@ class PlayState extends MusicBeatState
 		                  var street:FlxSprite = new FlxSprite(-40, streetBehind.y).loadGraphic(Paths.image('philly/street'));
 	                          add(street);
 		          }
-		          case 'milf' | 'satin-panties' | 'high' | 'rockin\'-with-fire' | 'qilin\'s-prance':
+		          case 'milf' | 'satin-panties' | 'high' | 'rockin\'-with-fire' | 'qilin\'s-prance' | 'dance-of-aphros':
 		          {
 		                  curStage = 'limo';
 		                  defaultCamZoom = 0.90;

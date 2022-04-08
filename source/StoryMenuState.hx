@@ -29,13 +29,14 @@ class StoryMenuState extends MusicBeatState
 		['Pico', 'Philly', "Blammed"],
 		['Satin-Panties', "High", "Milf"],
 		['Flaming-Fry', 'Let\'s-Go,-Crimson-Knight!', 'Bard\'s-Adventure'],
+		['Rockin\'-With-Fire', 'Qilin\'s-Prance', 'Dance-of-Aphros'],
 		// ['Cocoa', 'Eggnog', 'Winter-Horrorland'],
 		// ['Senpai', 'Roses', 'Thorns']
 	];
 	var curDifficulty:Int = 1;
 
 	public static var weekUnlocked:Array<Bool> = [
-		true, true, true, true, true, true
+		true, true, true, true, true, true, true
 	];
 
 	final weekCharacters:Array<Array<String>> = [
@@ -45,6 +46,7 @@ class StoryMenuState extends MusicBeatState
 		['pico', 'bf', 'gf'],
 		['mom', 'bf', 'gf'],
 		['dad', 'bf', 'gf'],
+		['mom', 'bf', 'gf'],
 		// ['parents-christmas', 'bf', 'gf'],
 		// ['senpai', 'bf', 'gf']
 	];
@@ -56,6 +58,7 @@ class StoryMenuState extends MusicBeatState
 		"PICO",
 		"MOMMY MUST MURDER",
 		"Nice and spicy",
+		"Vengeance will be mine",
 		// "RED SNOW",
 		// "hating simulator ft. moawling"
 	];
